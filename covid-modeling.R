@@ -89,8 +89,8 @@ out_init = solve.base.model(y_ = state,
 
 # Plot the filtered data and the first model "guess"
 ggplot(uncontrolled_period) +
-  geom_col(aes(x=Date, y=Cases), width=1, fill="dodgerblue2", colour="blue") +
-  geom_point(data=out_init, aes(x=Date, y=Incidence), size=2, colour="firebrick2") +
+  geom_col(aes(x=Date, y=Cases), width=1, fill="dodgerblue2", colour="black") +
+  geom_line(data=out_init, aes(x=Date, y=Incidence), size=2, colour="darkgreen") +
   ylab("Daily cases") +
   xlab("") +
   ggtitle("Philippines' Daily Confirmed Cases - Guess parameters") +
@@ -142,8 +142,8 @@ optimal_solution = solve.base.model(
 
 # Plot the optimal solution
 ggplot(uncontrolled_period) +
-  geom_col(aes(x=Date, y=Cases), width=1, fill="dodgerblue2", colour="blue") +
-  geom_point(data=optimal_solution, aes(x=Date, y=Incidence), size=2, colour="firebrick2") +
+  geom_col(aes(x=Date, y=Cases), width=1, fill="dodgerblue2", colour="black") +
+  geom_line(data=optimal_solution, aes(x=Date, y=Incidence), size=2, colour="darkgreen") +
   ylab("Daily cases") +
   xlab("") +
   ggtitle("Philippines' Daily Confirmed Cases - Fitted") +
@@ -160,8 +160,10 @@ optimal_solution = solve.base.model(
   parms = optimal_parameters
 )
 
-actual_cases = first_wave %>%
-  filter(Date >= start_date, Date <= end_modeling_date)
+actual_cases_training = first_wave %>%
+  filter(Date >= start_date, Date <= end_date)
+actual_cases_projections = first_wave %>%
+  filter(Date > end_date, Date <= end_modeling_date)
 forecast_base = first_wave %>%
   filter(Date > end_date, Date <= end_modeling_date)
 trained = optimal_solution %>%
@@ -175,10 +177,10 @@ poisson_log_likelihood_projected = -sum(dpois(forecast_base$Cases,forecasted$Inc
 poisson_log_likelihood_projected
 
 # Plot the model optimal model projections
-ggplot(actual_cases) +
-  geom_col(aes(x=Date, y=Cases), width=1, fill="dodgerblue2", colour="blue") +
-  geom_point(data=trained, aes(x=Date, y=Incidence), size=2, colour="firebrick2") +
-  geom_point(data=forecasted, aes(x=Date, y=Incidence), size=2, colour="green") +
+ggplot(actual_cases_training) +
+  geom_col(aes(x=Date, y=Cases), width=1, fill="dodgerblue2", colour="black") +
+  geom_col(data=actual_cases_projections, aes(x=Date, y=Cases), width=1, fill="firebrick", colour="black") +
+  geom_line(data=optimal_solution, aes(x=Date, y=Incidence), size=2, colour="darkgreen") +
   ylab("Daily cases") +
   xlab("") +
   ggtitle("Projections using L-BFGS-B") +
