@@ -54,7 +54,8 @@ parameters = c(
   epsilonT = 0.0031,
   deltaA = 0.2, #for fitting
   deltaS = 0.2, #for fitting
-  theta = 0.714
+  theta = 0.714,
+  newlambda = 0
 )
 
 # State variables
@@ -183,5 +184,39 @@ ggplot(actual_cases_training) +
   geom_line(data=optimal_solution, aes(x=Date, y=Incidence), size=2, colour="darkgreen") +
   ylab("Daily cases") +
   xlab("") +
-  ggtitle("Projections using L-BFGS-B") +
+  ggtitle("Projections using optimal parameters") +
+  theme_bw()
+
+
+# Code for scenario-building
+# Assign a new lambda value and apply to projection period
+
+# Allow more people to go out by implementing less stricter CQ
+optimal_parameters['newlambda'] = 0.75
+sc1 = solve.base.model(
+  y_ = optimal_initial_state,
+  times_ = times_extended,
+  func. = COVID.base,
+  parms = optimal_parameters
+)
+
+# Allow less people to go out by implementing stricter CQ
+optimal_parameters['newlambda'] = 0.8
+sc2 = solve.base.model(
+  y_ = optimal_initial_state,
+  times_ = times_extended,
+  func. = COVID.base,
+  parms = optimal_parameters
+)
+
+# Plot the model optimal model projections and SC1
+ggplot(actual_cases_training) +
+  geom_col(aes(x=Date, y=Cases), width=1, fill="dodgerblue2", colour="black") +
+  geom_col(data=actual_cases_projections, aes(x=Date, y=Cases), width=1, fill="firebrick", colour="black") +
+  geom_line(data=optimal_solution, aes(x=Date, y=Incidence), size=2, colour="darkgreen") +
+  geom_point(data=sc1, aes(x=Date, y=Incidence), size=2, colour="lightgreen") +
+  geom_point(data=sc2, aes(x=Date, y=Incidence), size=2, colour="orange") +
+  ylab("Daily cases") +
+  xlab("") +
+  ggtitle("Projections using optimal parameters") +
   theme_bw()

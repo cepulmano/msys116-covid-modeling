@@ -5,7 +5,11 @@ COVID.base = function(t, state, parameters) {
     Population = S + E + IA + IS + C
     
     # Calculate intervention efficacy
-    beta = (1-lambda)*beta
+    if(newlambda > 0 && (t >= 13)) {
+      beta = (1-newlambda)*beta
+    } else {
+      beta = (1-lambda)*beta      
+    }
     
     # Calculate the average force of infection imposed on each susceptible individual
     force_of_infection = beta*(psi*IA + IS)/Population
