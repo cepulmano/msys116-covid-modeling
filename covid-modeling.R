@@ -33,9 +33,9 @@ end_modeling_date = end_date + 14
 # Initial conditions
 N = 109035343  # Population of Philippines
 S_0 = 0.75*N
-E_0 = 1 # for fitting
-IA_0 = 2 # for fitting
-IS_0 = 2 # for fitting
+E_0 = 200 # for fitting
+IA_0 = 1 # for fitting
+IS_0 = 50 # for fitting
 C_0 = 5132
 
 # Initial model parameters taken from
@@ -45,7 +45,7 @@ parameters = c(
   mu = 4.05e-5,
   A =  N*0.020177/365,
   beta = 0.4343,
-  lambda = 0.1, # for fitting
+  lambda = 0.8, # for fitting
   psi = 1,
   alphaA = 0.2,
   alphaS = 0.2,
@@ -75,7 +75,7 @@ times = seq(start_date, end_date, by=1)
 # we are only interested in solutions in the range (0, Inf)
 # Therefore, it would be a good idea to apply a transformation to our
 # search space so that we are not wasting time exploring infeasible regions of parameter space.
-initial_transformed_parameters = log(c(1,2,2,0.1,0.2,0.2))
+initial_transformed_parameters = log(c(1,2,50,0.1,0.2,0.2))
 initial_transformed_parameters
 
 # Filter data to capture period prior to interventions. This has already been done in the last session.
